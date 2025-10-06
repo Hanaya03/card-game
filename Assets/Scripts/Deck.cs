@@ -19,7 +19,7 @@ public class Deck : MonoBehaviour
             _cards[i * 4 + 3] = new PirateCard();
         }
 
-        FillHand();
+        // FillHand();
     }
 
     // Update is called once per frame
@@ -30,7 +30,7 @@ public class Deck : MonoBehaviour
 
     private void DrawCard()
     {
-
+        
     }
 
     private void FillHand()
@@ -42,7 +42,7 @@ public class Deck : MonoBehaviour
         _deckSize = _deckSize - _handSize;
     }
 
-    private void ShuffleDeck()
+    public void ShuffleDeck()
     {
         //Fisher–Yates shuffle
         BCard tmp;
@@ -55,6 +55,8 @@ public class Deck : MonoBehaviour
             _cards[idx] = _cards[i];
             _cards[i] = tmp;
         }
+
+        ListDeck();
 
     }
 
