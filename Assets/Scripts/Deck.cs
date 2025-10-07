@@ -7,6 +7,7 @@ public class Deck : MonoBehaviour
     private int _deckSize = 32;
     private BCard[] _cards = new BCard[32];
     private BCard[] _hand = new BCard[5];
+    private GameObject[] _cardArr = new GameObject[5];  
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
