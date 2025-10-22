@@ -3,24 +3,90 @@ using System.Collections.Generic;
 
 public class Deck : MonoBehaviour
 {
+    public bool faceDown;
+    public GameManager _manager;
+    public Transform ui;
+    public DeckScriptableObject References;
     private int _handSize = 5;
+    public int HandSize{get{ return _handSize; }}
     private int _deckSize = 32;
-    private BCard[] _cards = new BCard[32];
+    public int DeckSize{get{ return _deckSize; }}
+    [SerializeField] private BCard[] _cards;
     private BCard[] _hand = new BCard[5];
-    private GameObject[] _cardArr = new GameObject[5];  
+    public BCard[] Hand{ get{ return _hand; } }
+    private GameObject[] _cardArr = new GameObject[5];
+    public GameObject[] CARDS { get{ return _cardArr; }}
+    private GameObject tmp;
+    public int _cardY;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        for (int i = 0; i < 8; i++)
+        ShuffleDeck();
+        FillHand();
+        DisplayCards();
+    }
+
+    private void DisplayCards()
+    {
+        BCard tmpCard;
+        Quaternion q = Quaternion.identity;
+
+        if (faceDown)
+            q = Quaternion.Inverse(q);
+
+        
+        for (int i = 0; i < _handSize; i++)
         {
-            _cards[i * 4] = new GokuCard();
-            _cards[i * 4 + 1] = new WizardCard();
-            _cards[i * 4 + 2] = new RexCard();
-            _cards[i * 4 + 3] = new PirateCard();
+            switch (_hand[i].Name)
+            {
+                case "Son Goku":
+                    _cardArr[i] = Instantiate(References.Deck[1], new Vector3(i - 2, _cardY, 0), q, gameObject.transform);
+                    break;
+                case "Ancient Arch Wizard":
+                    _cardArr[i] = Instantiate(References.Deck[0], new Vector3(i - 2, _cardY, 0), q, gameObject.transform);
+                    break;
+                case "King Rex":
+                    _cardArr[i] = Instantiate(References.Deck[2], new Vector3(i - 2, _cardY, 0), q, gameObject.transform);
+                    break;
+                case "Great Pirate Overlord":
+                    _cardArr[i] = Instantiate(References.Deck[3], new Vector3(i - 2, _cardY, 0), q, gameObject.transform);
+                    break;
+            }
+
+            tmpCard = _cardArr[i].GetComponent<BCard>();
+
+            tmpCard.IDX = i;
+            tmpCard._manager = _manager;
+            tmpCard.DECK = this;
+        }
+    }
+    
+    private void DisplayCard(int idx)
+    {
+        BCard tmpCard;
+
+        switch (_hand[idx].Name)
+        {
+            case "Son Goku":
+                _cardArr[idx] = Instantiate(References.Deck[1], new Vector3(idx - 2, _cardY, 0), Quaternion.identity, gameObject.transform);
+                break;
+            case "Ancient Arch Wizard":
+                _cardArr[idx] = Instantiate(References.Deck[0], new Vector3(idx - 2, _cardY, 0), Quaternion.identity, gameObject.transform);
+                break;
+            case "King Rex":
+                _cardArr[idx] = Instantiate(References.Deck[2], new Vector3(idx - 2, _cardY, 0), Quaternion.identity, gameObject.transform);
+                break;
+            case "Great Pirate Overlord":
+                _cardArr[idx] = Instantiate(References.Deck[3], new Vector3(idx - 2, _cardY, 0), Quaternion.identity, gameObject.transform);
+                break;
         }
 
-        // FillHand();
+        tmpCard = _cardArr[idx].GetComponent<BCard>();
+        
+        tmpCard.IDX = idx;
+        tmpCard._manager = _manager;
+        tmpCard.DECK = this;
     }
 
     // Update is called once per frame
@@ -29,9 +95,13 @@ public class Deck : MonoBehaviour
 
     }
 
-    private void DrawCard()
+    private void DrawCard(int idx)
     {
-        
+        if (DeckSize == 0)
+            return;
+        _hand[idx] = _cards[_deckSize - 1];
+        _deckSize -= 1;
+        DisplayCard(idx);
     }
 
     private void FillHand()
@@ -41,6 +111,12 @@ public class Deck : MonoBehaviour
             _hand[i] = _cards[_deckSize - i - 1];
         }
         _deckSize = _deckSize - _handSize;
+    }
+
+    public void RemoveFromHand(int idx)
+    {
+        _hand[idx] = null;
+        DrawCard(idx);
     }
 
     public void ShuffleDeck()
@@ -57,7 +133,7 @@ public class Deck : MonoBehaviour
             _cards[i] = tmp;
         }
 
-        ListDeck();
+        // ListDeck();
 
     }
 

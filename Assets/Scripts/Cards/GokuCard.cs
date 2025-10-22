@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class GokuCard : BCard
 {
-    public GokuCard()
+    void Awake()
     {
         this._value = 10;
         this._name = "Son Goku";
-        this._id = 001;
+        this._moving = true;
     }
 }

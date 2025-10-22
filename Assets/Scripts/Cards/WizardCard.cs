@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class WizardCard : BCard
 {
-     public WizardCard()
+    void Awake()
     {
         this._value = 10;
         this._name = "Ancient Arch Wizard";
-        this._id = 001;
+        this._moving = true;
     }
 }

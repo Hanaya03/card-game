@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class PirateCard : BCard
 {
-     public PirateCard()
+    void Awake()
     {
         this._value = 10;
         this._name = "Great Pirate Overlord";
-        this._id = 001;
+        this._moving = false;
     }
 }
