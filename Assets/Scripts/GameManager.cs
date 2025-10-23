@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
@@ -8,6 +9,8 @@ public class GameManager : MonoBehaviour
     private int _turnCount = 0;
     private bool playerTurn = true;
     public GameObject _selectedCard;
+    [SerializeField] private AudioClip _cardMovingSFX;
+    [SerializeField] private AudioSource _audioSource; 
     [SerializeField] private Pile _pileR;
     [SerializeField] private Pile _pileC;
     [SerializeField] private Pile _pileL;
@@ -27,17 +30,9 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
-        if (!playerTurn)
+        if (!playerTurn && !_opp.IsThinking)
         {
-            _opp.TakeTurn();
-            
-            playerTurn = true;
-            _turnCount++;
-            if (_turnCount % 5 == 0)
-            {
-                EndRound();
-                _turnCount = 0;
-            }
+            StartCoroutine(OpponentTurn());
         }
     }
     
@@ -65,18 +60,41 @@ public class GameManager : MonoBehaviour
             Debug.Log("Player won this round");
         }
 
+        if(_roundsWon > 1)
+        {
+            //player won the game
+        }
+
         _vicroys = 0;
+
         _pileC.EmptyPile();
         _pileL.EmptyPile();
         _pileR.EmptyPile();
         _opp.PileC.EmptyPile();
         _opp.PileL.EmptyPile();
         _opp.PileR.EmptyPile();
+
+        _audioSource.PlayOneShot(_cardMovingSFX, 1);
     }
 
     public void ReferencePile(GameObject cardObj, BCard card, GameObject pile)
     {
         _piles[pile.name].AddToPile(cardObj, card);
         playerTurn = !playerTurn;
+    }
+
+    IEnumerator OpponentTurn()
+    {
+        yield return new WaitForSeconds(_opp.ThinkingTime());
+        _opp.TakeTurn();
+            
+        playerTurn = true;
+        _turnCount++;
+        if (_turnCount % 5 == 0)
+        {
+            yield return new WaitForSeconds(.5f);
+            EndRound();
+            _turnCount = 0;
+        }
     }
 }

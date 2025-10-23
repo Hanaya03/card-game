@@ -3,6 +3,9 @@ using UnityEngine.EventSystems;
 
 public class BCard : MonoBehaviour
 {
+    [SerializeField] private AudioClip _cardGrabSFX;
+    [SerializeField] private AudioClip _cardDropSFX;
+    [SerializeField] private AudioSource _audioSource;
     [SerializeField] private CardScriptableObject _cardData;
     public bool _moving = false;
     protected Vector3 targetPosition;
@@ -34,6 +37,7 @@ public class BCard : MonoBehaviour
         else
         {
             transform.position = _targetPile.transform.position;
+            _audioSource.PlayOneShot(_cardDropSFX, 1);
             _manager.ReferencePile(gameObject, this, _targetPile);
             DECK.RemoveFromHand(_idx);
         }
@@ -42,6 +46,7 @@ public class BCard : MonoBehaviour
     public void PickUpCard()
     {
         _posOriginal = transform.position;
+        _audioSource.PlayOneShot(_cardGrabSFX, 1);
         _dragging = true;
     }
 

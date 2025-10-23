@@ -5,6 +5,9 @@ public class Opponent : MonoBehaviour
     [SerializeField] private GameObject[] _objPiles;
     [SerializeField] private Pile[] _sPiles;
     [SerializeField] private Deck _deck;
+    private int _timeToThink;
+    private bool _thinking;
+    public bool IsThinking => _thinking;
     private BCard _currentCard;
     private int _lowestPile = 0;
     private int _selectedCard;
@@ -24,6 +27,12 @@ public class Opponent : MonoBehaviour
 
     }
 
+    public float ThinkingTime()
+    {
+        _thinking = true;
+        return Random.Range(.1f, 1f);
+    }
+
     public void TakeTurn()
     {
         Debug.Log("opponent turn");
@@ -40,6 +49,14 @@ public class Opponent : MonoBehaviour
     public void SelectCard()
     {
         _selectedCard = Random.Range(0, _deck.HandSize);
+        if(_deck.Hand[_selectedCard] == null)
+        {
+            for(int i = 0; i < _deck.HandSize; i++)
+            {
+                if (_deck.Hand[i] != null)
+                    _selectedCard = i;
+            }
+        }
     }
     
     public void PlayCard()
@@ -50,5 +67,6 @@ public class Opponent : MonoBehaviour
         _sPiles[_lowestPile].AddToPile(_deck.CARDS[_selectedCard], _currentCard);
 
         _deck.RemoveFromHand(_currentCard.IDX);
+        _thinking = false;
     }
 }
