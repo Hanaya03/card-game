@@ -17,17 +17,17 @@ public class BCard : MonoBehaviour
     private float _zOffset;
     public float Z { get { return _zOffset; } set { _zOffset = value; } }
     public bool _moving = false;
-    protected Vector3 targetPosition;
-    protected Vector3 _posOriginal;
+    private Vector3 targetPosition;
+    private Vector3 _posOriginal;
     public GameObject _targetPile;
     public GameManager _manager;
     public Deck DECK;
-    protected int _value;
-    protected string _name;
-    protected int _idx;
-    protected bool _dragging;
+    private int _value;
+    private string _name;
+    private int _idx;
+    private bool _dragging;
     public bool Dragging { set { _dragging = value; } }
-    protected RectTransform rectTransform;
+    private RectTransform rectTransform;
     public int IDX { get => _idx; set => _idx = value; }
     public int Value { get { return _cardData.Value; } }
     public string Name { get { return _cardData.Name; } }
