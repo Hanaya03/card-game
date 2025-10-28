@@ -1,12 +1,21 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/*
+/Base card Script.
+/since all card logic is the same, only difference being the point value and name, we pull the point value 
+/and name from a scriptable object
+*/
+
 public class BCard : MonoBehaviour
 {
     [SerializeField] private AudioClip _cardGrabSFX;
     [SerializeField] private AudioClip _cardDropSFX;
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private CardScriptableObject _cardData;
+    private Pile _sPile;
+    private float _zOffset;
+    public float Z { get { return _zOffset; } set { _zOffset = value; } }
     public bool _moving = false;
     protected Vector3 targetPosition;
     protected Vector3 _posOriginal;
@@ -17,7 +26,7 @@ public class BCard : MonoBehaviour
     protected string _name;
     protected int _idx;
     protected bool _dragging;
-    public bool Dragging{set{ _dragging = value; }}
+    public bool Dragging { set { _dragging = value; } }
     protected RectTransform rectTransform;
     public int IDX { get => _idx; set => _idx = value; }
     public int Value { get { return _cardData.Value; } }
@@ -29,8 +38,10 @@ public class BCard : MonoBehaviour
 
     public void OnDrop()
     {
+        if (_sPile != null)
+            _sPile.DeactivateHighlight();
         _dragging = false;
-        if(_targetPile == null)
+        if (_targetPile == null)
         {
             transform.position = _posOriginal;
         }
@@ -42,7 +53,7 @@ public class BCard : MonoBehaviour
             DECK.RemoveFromHand(_idx);
         }
     }
-    
+
     public void PickUpCard()
     {
         _posOriginal = transform.position;
@@ -55,14 +66,19 @@ public class BCard : MonoBehaviour
         if (collider.tag == "Pile")
         {
             _targetPile = collider.gameObject;
+            _sPile = _targetPile.GetComponent<Pile>();
+            if (_dragging)
+                _sPile.ActivateHighlight();
         }
     }
 
     void OnTriggerExit(Collider collider)
     {
+        if (_dragging)
+            _targetPile.GetComponent<Pile>().DeactivateHighlight();
         _targetPile = null;
     }
-    
+
     public void MoveTo(Vector3 pos)
     {
         targetPosition = pos;
@@ -80,7 +96,7 @@ public class BCard : MonoBehaviour
         //     MouseUp();
         // }
     }
-    
+
     void FixedUpdate()
     {
         if (_moving)

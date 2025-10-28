@@ -1,11 +1,19 @@
 using UnityEngine;
 using System;
 using TMPro;
+using UnityEngine.UI;
 
+/*
+/Pile script that controls the 6 piles.
+/provides methods for moving cards in and out of the pile
+/and changing colors
+*/
 public class Pile : MonoBehaviour
 {
+    [SerializeField] private GameObject _highlight;
     [SerializeField] private Transform _graveYard;
-    [SerializeField]private TextMeshProUGUI _pointCounter;
+    [SerializeField] private Image _img;
+    [SerializeField] private TextMeshProUGUI _pointCounter;
     private int _points = 0;
     private int _cardsLength;
     private GameObject[] _cards = new GameObject[10];
@@ -21,7 +29,7 @@ public class Pile : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -29,7 +37,12 @@ public class Pile : MonoBehaviour
     {
 
     }
-    
+
+    public void ChangeColor(Color newColor)
+    {
+        _img.color = newColor;
+    }
+
     public void EmptyPile()
     {
         _points = 0;
@@ -38,6 +51,16 @@ public class Pile : MonoBehaviour
             _scards[c].MoveTo(_graveYard.position);
         }
         _pointCounter.text = $"{_points}";
+    }
+
+    public void ActivateHighlight()
+    {
+        _highlight.SetActive(true);
+    }
+
+    public void DeactivateHighlight()
+    {
+        _highlight.SetActive(false);
     }
 
     public void AddToPile(GameObject cardObj, BCard card)

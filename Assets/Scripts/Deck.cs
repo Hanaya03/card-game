@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/*
+/Deck and hand management system.
+/keeps track of the cards in a character's deck and hand
+/provides references to game objects and cards scripts.
+*/
+
 public class Deck : MonoBehaviour
 {
     public bool faceDown;
@@ -8,14 +14,14 @@ public class Deck : MonoBehaviour
     public Transform ui;
     public DeckScriptableObject References;
     private int _handSize = 5;
-    public int HandSize{get{ return _handSize; }}
+    public int HandSize { get { return _handSize; } }
     private int _deckSize = 32;
-    public int DeckSize{get{ return _deckSize; }}
+    public int DeckSize { get { return _deckSize; } }
     [SerializeField] private BCard[] _cards;
-    private BCard[] _hand = new BCard[5];
-    public BCard[] Hand{ get{ return _hand; } }
-    private GameObject[] _cardArr = new GameObject[5];
-    public GameObject[] CARDS { get{ return _cardArr; }}
+    private BCard[] _hand = new BCard[5];//the card script that corresponds to the card gameobject
+    public BCard[] Hand { get { return _hand; } }
+    private GameObject[] _cardArr = new GameObject[5];//The game object that the player sees
+    public GameObject[] CARDS { get { return _cardArr; } }
     private GameObject tmp;
     public int _cardY;
 
@@ -35,55 +41,57 @@ public class Deck : MonoBehaviour
         if (faceDown)
             q = Quaternion.Inverse(q);
 
-        
+
         for (int i = 0; i < _handSize; i++)
         {
             switch (_hand[i].Name)
             {
                 case "Son Goku":
-                    _cardArr[i] = Instantiate(References.Deck[1], new Vector3(i - 2, _cardY, 0), q, gameObject.transform);
+                    _cardArr[i] = Instantiate(References.Deck[1], new Vector3(i - 2, _cardY, i * -.1f), q, gameObject.transform);
                     break;
                 case "Ancient Arch Wizard":
-                    _cardArr[i] = Instantiate(References.Deck[0], new Vector3(i - 2, _cardY, 0), q, gameObject.transform);
+                    _cardArr[i] = Instantiate(References.Deck[0], new Vector3(i - 2, _cardY, i * -.1f), q, gameObject.transform);
                     break;
                 case "King Rex":
-                    _cardArr[i] = Instantiate(References.Deck[2], new Vector3(i - 2, _cardY, 0), q, gameObject.transform);
+                    _cardArr[i] = Instantiate(References.Deck[2], new Vector3(i - 2, _cardY, i * -.1f), q, gameObject.transform);
                     break;
                 case "Great Pirate Overlord":
-                    _cardArr[i] = Instantiate(References.Deck[3], new Vector3(i - 2, _cardY, 0), q, gameObject.transform);
+                    _cardArr[i] = Instantiate(References.Deck[3], new Vector3(i - 2, _cardY, i * -.1f), q, gameObject.transform);
                     break;
             }
 
             tmpCard = _cardArr[i].GetComponent<BCard>();
 
+            tmpCard.Z = i * -.1f;
             tmpCard.IDX = i;
             tmpCard._manager = _manager;
             tmpCard.DECK = this;
         }
     }
-    
-    private void DisplayCard(int idx)
+
+    private void DisplayCard(int idx, float z)
     {
         BCard tmpCard;
 
         switch (_hand[idx].Name)
         {
             case "Son Goku":
-                _cardArr[idx] = Instantiate(References.Deck[1], new Vector3(idx - 2, _cardY, 0), Quaternion.identity, gameObject.transform);
+                _cardArr[idx] = Instantiate(References.Deck[1], new Vector3(idx - 2, _cardY, z), Quaternion.identity, gameObject.transform);
                 break;
             case "Ancient Arch Wizard":
-                _cardArr[idx] = Instantiate(References.Deck[0], new Vector3(idx - 2, _cardY, 0), Quaternion.identity, gameObject.transform);
+                _cardArr[idx] = Instantiate(References.Deck[0], new Vector3(idx - 2, _cardY, z), Quaternion.identity, gameObject.transform);
                 break;
             case "King Rex":
-                _cardArr[idx] = Instantiate(References.Deck[2], new Vector3(idx - 2, _cardY, 0), Quaternion.identity, gameObject.transform);
+                _cardArr[idx] = Instantiate(References.Deck[2], new Vector3(idx - 2, _cardY, z), Quaternion.identity, gameObject.transform);
                 break;
             case "Great Pirate Overlord":
-                _cardArr[idx] = Instantiate(References.Deck[3], new Vector3(idx - 2, _cardY, 0), Quaternion.identity, gameObject.transform);
+                _cardArr[idx] = Instantiate(References.Deck[3], new Vector3(idx - 2, _cardY, z), Quaternion.identity, gameObject.transform);
                 break;
         }
 
         tmpCard = _cardArr[idx].GetComponent<BCard>();
-        
+
+        tmpCard.Z = z;
         tmpCard.IDX = idx;
         tmpCard._manager = _manager;
         tmpCard.DECK = this;
@@ -95,13 +103,13 @@ public class Deck : MonoBehaviour
 
     }
 
-    private void DrawCard(int idx)
+    private void DrawCard(int idx, float z)
     {
         if (DeckSize == 0)
             return;
         _hand[idx] = _cards[_deckSize - 1];
         _deckSize -= 1;
-        DisplayCard(idx);
+        DisplayCard(idx, z);
     }
 
     private void FillHand()
@@ -115,8 +123,9 @@ public class Deck : MonoBehaviour
 
     public void RemoveFromHand(int idx)
     {
+        float tmp = _hand[idx].Z;
         _hand[idx] = null;
-        DrawCard(idx);
+        DrawCard(idx, tmp);
     }
 
     public void ShuffleDeck()

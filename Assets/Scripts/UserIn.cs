@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/*
+/managers user input.
+*/
+
 public class UserIn : MonoBehaviour
 {
     private InputSystem_Actions controls;
@@ -30,7 +34,7 @@ public class UserIn : MonoBehaviour
     {
         RaycastHit raycastHit;
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        
+
         if (Physics.Raycast(ray, out raycastHit, 100f))
         {
             if (raycastHit.transform.CompareTag("Card"))
@@ -54,12 +58,12 @@ public class UserIn : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

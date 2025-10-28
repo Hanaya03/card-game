@@ -1,10 +1,17 @@
 using UnityEngine;
 
+/*
+/opponent logic and control
+/only entrypoint is TakeTurn(), everything is done internally
+/decides on a card, decides a pile to play card into, and then plays that card.
+*/
+
 public class Opponent : MonoBehaviour
 {
     [SerializeField] private GameObject[] _objPiles;
     [SerializeField] private Pile[] _sPiles;
     [SerializeField] private Deck _deck;
+    [SerializeField] private OpponentEmote _emoteWheel;
     private int _timeToThink;
     private bool _thinking;
     public bool IsThinking => _thinking;
@@ -12,9 +19,9 @@ public class Opponent : MonoBehaviour
     private int _lowestPile = 0;
     private int _selectedCard;
 
-    public Pile PileL{get{return _sPiles[0]; }}
-    public Pile PileC{get{return _sPiles[1]; }}
-    public Pile PileR{get{return _sPiles[2]; }}
+    public Pile PileL { get { return _sPiles[2]; } }
+    public Pile PileC { get { return _sPiles[1]; } }
+    public Pile PileR { get { return _sPiles[0]; } }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,16 +56,16 @@ public class Opponent : MonoBehaviour
     public void SelectCard()
     {
         _selectedCard = Random.Range(0, _deck.HandSize);
-        if(_deck.Hand[_selectedCard] == null)
+        if (_deck.Hand[_selectedCard] == null)
         {
-            for(int i = 0; i < _deck.HandSize; i++)
+            for (int i = 0; i < _deck.HandSize; i++)
             {
                 if (_deck.Hand[i] != null)
                     _selectedCard = i;
             }
         }
     }
-    
+
     public void PlayCard()
     {
         _currentCard = _deck.CARDS[_selectedCard].GetComponent<BCard>();
@@ -68,5 +75,15 @@ public class Opponent : MonoBehaviour
 
         _deck.RemoveFromHand(_currentCard.IDX);
         _thinking = false;
+    }
+
+    public void OnLose()
+    {
+        _emoteWheel.PlaySadEmote();
+    }
+
+    public void OnWin()
+    {
+        _emoteWheel.PlayHappyEmote();
     }
 }
